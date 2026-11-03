@@ -54,7 +54,7 @@ flowchart TD
 
 ## 合否をどう判断するか
 
-検査は「すべて通ったか」だけでは不十分です。失敗の種類に応じた判断が要ります。
+検査は「すべて通ったか」だけでは不十分です。**機械的に判定できる合格条件を先に決め**、失敗の種類に応じた判断を行います。例えば必須テストの終了コード、検査対象のコミット、変更可能なファイル範囲です。「AIが自信ありと答えた」は検証結果になりません。
 
 | 状況 | 判断の例 |
 | --- | --- |
@@ -62,6 +62,8 @@ flowchart TD
 | セキュリティ上の重大な懸念 | 専門家が確認するまで停止 |
 | 仕様が曖昧で期待値を決められない | 受入条件を確定するまで確認待ち |
 | 検査を通過 | 残存リスク、変更範囲、承認条件を確認してリリース判断 |
+
+合格条件を満たした後も、**変更が間違っていた場合の影響範囲と、元に戻せるか**で確認の深さを変えます。例えば文言修正と本番データを削除する変更では、同じ「テスト成功」でも必要な承認が異なります。これは具体的な運用設計例であり、すべての変更を一律に分類できるわけではありません。
 
 NISTの[Secure Software Development Framework（SSDF）](https://csrc.nist.gov/pubs/sp/800/218/final)も、脆弱性の低減だけでなく、見逃した問題の影響軽減や原因への対処を扱っています。これは**セキュリティ開発の指針**であり、すべての品質問題が解決するという意味ではありません。
 
@@ -79,7 +81,7 @@ AI生成コードを受け入れる際の責任を、次の3つに整理でき�
 
 リリース前には、リスクに応じた検証と承認を行い、判断根拠を記録します。リリース後に問題が見つかれば、影響を抑え、修正し、再発防止につなげます。これは、すべての欠陥を事前に発見できないことを前提とした運用です。
 
-人間のレビューを廃止する話ではありません。変更の危険度に応じて、専門家による確認や追加テストが必要です。
+人間のレビューを廃止する話ではありません。変更の危険度に応じて、専門家による確認や追加テストが必要です。Googleの[コードレビュー指針](https://google.github.io/eng-practices/review/reviewer/looking-for.html)でも、テストの妥当性、設計、動作をレビュー対象に挙げています。
 
 ## まとめ
 
@@ -94,3 +96,4 @@ AIによる実装を運用に組み込むには、コードレビューだけで
 - [GitHub Docs — GitHub Copilot Agents: Limitations](https://docs.github.com/en/copilot/responsible-use/agents)
 - [Google Testing Blog — Just Say No to More End-to-End Tests](https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html)
 - [NIST — Secure Software Development Framework（SP 800-218）](https://csrc.nist.gov/pubs/sp/800/218/final)
+- [Google — What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html)

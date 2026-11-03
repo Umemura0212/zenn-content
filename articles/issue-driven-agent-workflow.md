@@ -26,6 +26,8 @@ Issueには、実装前に決まっている情報と、実行中に更新され
 
 Issueは**タスク定義と共有する工程状態**の正本です。コードはGit、テスト結果はCI、レビューと承認はMRが正本です。Issueにはそれらのリンクと判定要約を残します。排他制御に使う短命な実行権（lease）は中央制御のデータストアで管理し、Issueの代替タスク台帳にはしません。
 
+Anthropicの[長時間実行するAgentの研究](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)でも、セッションをまたぐ作業のためにGit履歴と進捗ファイルを残しています。この設計では、**作業途中の詳細な引き継ぎはローカルの成果物に、チーム共通の受入条件・進捗はIssueに**分担させます。会話履歴だけを正本にしないためです。
+
 GitLabには[ラベルを使った工程管理](https://docs.gitlab.com/tutorials/kanban/)があります。例えば `status::ready`、`status::running` などで表示できます。ただし、相互排他的な**Scoped LabelsはPremium・Ultimateの機能**です。Freeや対応しないバージョンでは通常ラベルを使い、中央制御で「状態は1つ」の不変条件を検証します。
 
 ## 状態遷移は誰が決めるのか
@@ -121,6 +123,7 @@ Issueを正本にする目的は、単にタスクを一覧表示することで
 
 ## 参考資料
 
+- [Anthropic — Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Google SRE — Postmortem Culture: Learning from Failure](https://sre.google/sre-book/postmortem-culture/)
 - [GitLab Docs — Issues](https://docs.gitlab.com/user/project/issues/)
 - [GitLab Docs — Labels / Scoped Labels](https://docs.gitlab.com/user/project/labels/)

@@ -30,7 +30,7 @@ flowchart TD
 
 **内側：Agent Loop**
 
-与えられた目的に向けて、AIが調査・実行・確認・修正を繰り返します。作業の手順を毎回固定する必要はありません。
+与えられた目的に向けて、AIが調査・実行・確認・修正を繰り返します。作業の手順を毎回固定する必要はありません。ただし、**「完了した」と言うだけでは合格になりません**。可能な部分はテスト結果、対象ファイルの差分、必須出力の有無など、外部から確認できる条件で判定します。
 
 LangGraph公式の[Thinking in LangGraph](https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph)でも、処理をノードに分け、共有する状態を設計し、エラーの種類に応じて再試行や人間への確認を行う考え方が示されています。
 
@@ -45,6 +45,16 @@ AIはコードを調べ、修正し、テストを実行します。しかしテ
 そこで外側では「最大3回まで再試行」「検証に合格したら次へ」「権限変更は承認待ち」といったルールを持たせます。内側では、各試行でどのファイルを調べ、どう修正するかをAIに任せます。
 
 **外側は成功条件と実行権限を管理し、内側は達成手段を探す。** これが設計の核です。権限変更が必要なら、作業を中断して承認を求めます。
+
+## グラフは依存関係、ループは個々の修正を扱う
+
+Anthropicは[Building effective agents](https://www.anthropic.com/research/building-effective-agents)で、独立タスクの並列化と、評価結果を受けて生成物を修正するEvaluator-optimizerを別々のパターンとして紹介しています。
+
+例えば、変更対象の**テスト実行とドキュメントの整合性確認**が互いの結果を必要としないなら、並列化できます。一方、テストが失敗したファイルの修正は、その担当ノードへ差し戻せます。
+
+また、差分の集計やテスト結果の比較など、判定規則が明確な処理は通常のコードに任せられます。**グラフの全ノードをLLMにする必要はありません**。LangGraphの[Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api)も、ノードを通常の関数として扱います。
+
+並列化は依存関係がない場合に限ります。複数の作業が同じファイルや状態を更新するなら、競合を避ける設計が必要です。
 
 ## どんなときに分けるか
 
@@ -78,4 +88,5 @@ LangGraph自体もループや条件分岐を表現できます。「外側」�
 
 - [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents)
 - [LangGraph — Thinking in LangGraph](https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph)
+- [LangGraph — Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api)
 - [LangGraph — Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)

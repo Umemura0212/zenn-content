@@ -1,63 +1,71 @@
 ---
-title: "LangGraphで外側を管理し、内側はAIに任せる"
+title: "LangGraphで外側を制御し、内側をループさせるAIエージェント設計"
 emoji: "🔁"
 type: "tech"
 topics: ["langgraph", "ai", "agent", "architecture"]
 published: false
 ---
 
-AIエージェントの実行管理では、**制御する部分と自由に考えさせる部分を分ける**ことが重要だと考えています。
+Anthropicは[Building effective agents](https://www.anthropic.com/research/building-effective-agents)で、**事前に定めた経路を進むWorkflow**と、**LLMが手順やツールを動的に選ぶAgent**を区別しています。前者は予測しやすく、後者は柔軟です。
 
-そこで、外側をLangGraphで管理し、内側ではAIに試行錯誤させる構成を考えました。
+では、この2つをどう組み合わせればよいのでしょうか。
 
-## 2つの役割
+この記事では、**外側の工程をLangGraphで管理し、内側の作業はAgent Loopに任せる**設計を紹介します。どちらも既存の考え方です。ポイントは、**制御と自律性の境界をどこに置くか**です。
+
+## 外側と内側で役割を分ける
 
 ```mermaid
 flowchart TD
-    A[LangGraph: 作業を割り当てる] --> B[Agent Loop: 調査・実行・修正]
-    B --> C[LangGraph: 結果を検証する]
-    C -->|合格| D[次の工程へ]
+    A[LangGraph: タスクを渡す] --> B[Agent Loop: 調査・実行・確認・修正]
+    B --> C[LangGraph: 成果物を検証]
+    C -->|合格| D[次の工程]
     C -->|要修正| B
-    C -->|要承認| E[人間が判断する]
+    C -->|判断が必要| E[人間の承認]
+    C -->|上限到達| F[停止・報告]
 ```
 
 **外側：LangGraph**
 
-仕事全体の進行を管理します。
-
-- 次の工程を決める
-- 検証結果に応じて分岐する
-- 再実行や停止を管理する
-- 必要なら人間の判断を待つ
+工程の進行と判断を管理します。例えば、タスクの割り当て、検証結果による分岐、再試行の上限、人間の承認です。
 
 **内側：Agent Loop**
 
-個々の仕事の進め方はAIに任せます。
+与えられた目的に向けて、AIが調査・実行・確認・修正を繰り返します。作業の手順を毎回固定する必要はありません。
 
-- 状況を調べる
-- 必要な操作を行う
-- 結果を確認する
-- 必要なら修正して繰り返す
+LangGraph公式の[Thinking in LangGraph](https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph)でも、処理をノードに分け、共有する状態を設計し、エラーの種類に応じて再試行や人間への確認を行う考え方が示されています。
 
-## なぜ分けるのか
+## なぜ全部をAIに任せないのか
 
-AIの行動をすべて事前に決めると、柔軟性が失われます。
+例えば、AIに「不具合を修正して」と依頼したとします。
 
-一方、すべてをAIに任せると、停止条件や承認の管理が難しくなります。
+AIはコードを調べ、修正し、テストを実行します。しかしテストに失敗し続けたら、いつ止めるべきでしょうか。権限変更が必要になったら、誰が承認するのでしょうか。
 
-**外側でルールを守り、内側では自由に試行錯誤する。**
+これらまでAI自身の判断に任せると、**作業の成功条件と、作業を続けてよい条件**が混ざります。
 
-この分担なら、AIの柔軟性を活かしながら、実行全体を管理できます。
+そこで外側では「最大3回まで再試行」「検証に合格したら次へ」「権限変更は承認待ち」といったルールを持たせます。内側では、各試行でどのファイルを調べ、どう修正するかをAIに任せます。
+
+**何を達成するかは外側が決め、どう達成するかは内側に任せる。** この分離が設計の核です。
+
+## 分けることで何が変わるか
+
+外側のグラフには、タスクの状態、検証結果、再試行回数などを保持します。一方、内側のエージェントは作業中の調査結果やツール実行結果を扱います。
+
+これにより、工程全体の進捗や停止理由を追いやすくなります。また、作業担当のモデルやツールを入れ替えても、外側の承認ルールを維持しやすくなります。
+
+ただし、**LangGraphを使うだけで安全になるわけではありません**。検証条件、権限、停止条件は別途設計が必要です。内側の途中経過まで復旧したい場合は、内側にも状態保存の仕組みが要ります。
+
+また、LangGraph自体もループを表現できます。すべての構成で二重のループが必要なわけではありません。小さな処理なら単純なワークフローで十分です。
 
 ## まとめ
 
-LangGraphは工程の進行を管理します。内側のループは、各工程を達成するために試行錯誤します。
+外側のLangGraphで**工程と制約**を管理し、内側のAgent Loopで**手段の探索と実行**を行う。
 
-この2つを分けることで、**統制と自律性の両立**を目指せます。
+これは新しいフレームワークの発明ではなく、既存のWorkflowとAgentを役割分担させる設計です。
 
-なお、これは一つの設計案です。LangGraph自体もグラフ内の循環や条件分岐を扱えます。
+**AIの自由度を残しながら、停止・検証・承認を人間が設計できること**に価値があります。
 
 ## 参考資料
 
-- [LangGraph公式 Overview](https://docs.langchain.com/oss/python/langgraph/overview)
-- [LangGraph公式 Graph API](https://docs.langchain.com/oss/python/langgraph/use-graph-api)
+- [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents)
+- [LangGraph — Thinking in LangGraph](https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph)
+- [LangGraph — Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)

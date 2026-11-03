@@ -38,7 +38,7 @@ Anthropicの[Building effective agents](https://www.anthropic.com/research/build
 
 この分類は技術の正式な世代区分ではなく、**設計の責務を分けるための整理**です。Agent HarnessとEvaluation Harnessも同じものではありません。
 
-Anthropicの[Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)は、前者をモデルにツールを使わせる実行基盤、後者をタスク実行・記録・採点する評価基盤として区別しています。
+Anthropicの[Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)は、前者をモデルにツールを使わせる実行基盤、後者をタスク実行・記録・採点する評価基盤として区別しています。
 
 ## ループ・グラフ・ハーネスはどう組み合わさるか
 
@@ -57,7 +57,7 @@ flowchart TD
 
 グラフを使わないAgentも、単純なループで十分な仕事もあります。ハーネスは「グラフの次に登場する製品」ではなく、単一Agentの段階から必要な構成要素です。
 
-Anthropicは[長時間実行するAgentの研究](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents)で、コンテキストの切り替わりを越えて仕事を続けるため、機能リスト、Git履歴、進捗記録、作業環境の再起動手順を使っています。ここでは、単にプロンプトを長くするより、**次の実行が信頼できる状態から再開できること**が重要になります。
+Anthropicは[長時間実行するAgentの研究](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)で、コンテキストの切り替わりを越えて仕事を続けるため、機能リスト、Git履歴、進捗記録、作業環境の再起動手順を使っています。ここでは、単にプロンプトを長くするより、**次の実行が信頼できる状態から再開できること**が重要になります。
 
 ## 「動いた」から「改善できる」へ
 
@@ -65,7 +65,7 @@ Anthropicは[長時間実行するAgentの研究](https://www.anthropic.com/rese
 
 最初はユニットテストに通っても、結合テストで失敗するかもしれません。ここで必要なのは「もう一度頑張って」という指示ではなく、**失敗したテストと期待値を次の試行に渡すこと**です。
 
-さらに、同じ失敗が別のタスクでも起きるなら、受入条件や実行環境、ツールの使い方に改善余地がある可能性があります。
+さらに、同じ失敗が別のタスクでも起きるなら、受入条件や実行環境、ツールの使い方に改善余地がある可能性があります。ハーネスへの変更は、再現可能な評価で検証してから適用します。
 
 Anthropicの評価ガイドは、**Task（課題）、Trial（試行）、Grader（採点）、Transcript（実行記録）、Outcome（最終結果）**を区別します。例えば「テスト成功」だけでなく、変更対象外のファイルを触っていないか、何回の試行が必要だったかも評価できます。
 
@@ -99,7 +99,7 @@ OpenAIの[改善ループの実装例](https://developers.openai.com/cookbook/ex
 
 - [OpenAI — Prompt engineering](https://developers.openai.com/api/docs/guides/prompt-engineering)
 - [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents)
-- [Anthropic — Effective harnesses for long-running agents](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents)
+- [Anthropic — Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [OpenAI — Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
-- [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)
+- [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
 - [OpenAI Cookbook — Build an Agent Improvement Loop](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop)

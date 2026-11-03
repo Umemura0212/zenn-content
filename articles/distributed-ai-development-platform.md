@@ -69,6 +69,8 @@ GitLabのCIは検証結果を残す仕組みです。承認ルールは、誰が
 
 どちらでも、**受入条件は実装担当から独立して評価**できます。ローカル方式が常に優れているわけではありません。
 
+複数Workerへの配分では、**担当PCの数だけ並列化すればよいわけではありません**。Anthropicが[Building effective agents](https://www.anthropic.com/research/building-effective-agents)で紹介するParallelizationは、独立した作業単位を並列に実行する構成です。実際の開発では、ファイルの競合、共通ライブラリの変更、先行MRへの依存を確認してから並列化します。
+
 ## 自動化で重要になる状態管理
 
 AIの実装が複数同時に走る場合、同じIssueを二重に処理しない仕組みが必要です。
@@ -107,6 +109,7 @@ AIの実装が複数同時に走る場合、同じIssueを二重に処理しな�
 
 ## 参考資料
 
+- [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents)
 - [GitLab Docs — Merge request pipelines](https://docs.gitlab.com/ci/pipelines/merge_request_pipelines/)
 - [GitLab Docs — Merge request approval rules](https://docs.gitlab.com/user/project/merge_requests/approvals/rules/)
 - [GitLab Docs — Merge request approval settings](https://docs.gitlab.com/user/project/merge_requests/approvals/settings/)

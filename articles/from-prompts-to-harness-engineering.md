@@ -73,17 +73,26 @@ OpenAIの[改善ループの実装例](https://developers.openai.com/cookbook/ex
 
 ただし、**自己改善とは自動的に正しく進化することではありません**。評価基準が不適切なら、スコアを上げても品質は改善しません。変更の有効性は、独立した評価と必要に応じた人間の確認で判断します。
 
-## 何から導入するべきか
+## 何が壊れたら、どこを直すか
 
-| 仕事の条件 | まず検討する構成 |
+@m4lkxxの[「Harness, Loops, Graphs」](https://x.com/m4lkxx/status/2114338456750997922)は、Harnessを「何ができるか」、Loopを「正しいか」、Graphを「次に何をするか」という問いで整理しています。
+
+この見方を使うと、問題が起きたときに**長いプロンプトを書き直す前に、どの仕組みが不足しているか**を考えられます。
+
+| 起きている問題 | 改善する候補 |
 | --- | --- |
-| 一度の生成で完結する | 明確なPrompt＋人間の確認 |
-| ファイル操作やテストを繰り返す | Tool付きAgent Loop＋停止条件 |
-| 工程の依存関係や承認がある | Workflow / Graphによる進行制御 |
-| 長時間・複数セッションにまたがる | 状態・成果物・復旧を扱うHarness |
-| モデルやルールを継続的に改善したい | 再現可能なEvalsと実行記録 |
+| 要件の解釈が毎回ずれる | **Prompt / Context**：仕様と受入条件を明確にする |
+| 必要なテストを実行できない・途中で作業を忘れる | **Harness**：ツール、権限、永続的な進捗記録を整える |
+| AIが「完了」と報告するが、動作を確認できない | **Loop / Check**：実行可能なテストと成果物の検証を入れる |
+| 同じ失敗を繰り返してコストを消費する | **Loop / Feedback**：期待値と実測値、試行履歴、停止条件を渡す |
+| 独立した作業が直列化する・承認が抜ける | **Graph / Workflow**：依存関係、分岐、承認ゲートを設計する |
+| 変更のたびに以前の不具合が再発する | **Evals**：回帰ケースを蓄積し、変更前後を比較する |
 
-これは単方向の成熟度ランキングではありません。**同じシステムの中で全要素が併存**します。複雑な構成ほど、運用コスト、デバッグ、権限管理の負担も増えます。
+例えばバグ修正なら、着手前に**何が失敗すれば不具合を再現でき、何が通れば修正済みと判断するか**を決めます。再現テストが作れる場合は、修正前に失敗し、修正後に成功することを確かめます。テストを作れない場合も、判断に使う別の証拠を先に明示します。
+
+この表は診断の手がかりであり、必須の成熟度階段ではありません。複数の仕組みが同時に不足する場合もあります。Anthropicの[Building effective agents](https://www.anthropic.com/research/building-effective-agents)も、課題を満たす最も単純な構成から始める方針を示しています。
+
+**能力を増やすことと、実行を許可することも別です。** 取り消しにくい操作や権限変更には、モデルの自己評価に依存しない権限制御と承認が必要です。複雑な構成ほど、運用コストやデバッグの負担も増えます。
 
 また、OpenAIのHarness engineeringは特定チームの開発事例です。その効果や運用方針を、すべての組織に当てはまる実証結果として扱うことはできません。
 
@@ -103,3 +112,4 @@ OpenAIの[改善ループの実装例](https://developers.openai.com/cookbook/ex
 - [OpenAI — Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
 - [OpenAI Cookbook — Build an Agent Improvement Loop](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop)
+- [m4lkxx — Harness, Loops, Graphs: What Each Layer Fixes and What It Breaks（着想となった投稿）](https://x.com/m4lkxx/status/2114338456750997922)

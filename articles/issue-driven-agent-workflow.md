@@ -71,6 +71,8 @@ flowchart TD
 
 AIレビューの指摘は、そのまま差し戻しを確定させません。再現できる不具合や明確な受入条件違反なら差し戻し、判断が割れる指摘なら確認待ちにします。単なるコメント数で合否を決めません。
 
+差し戻しの情報は、**対象単位・判定・理由・証拠・修正範囲**で渡します。例えば「対象: 認証モジュール、判定: 不合格、証拠: リダイレクトのテストで期待302／実際200、修正範囲: 認証モジュール」のように記録します。独立した3件のうち1件だけが失敗したなら、原則その1件を再実行します。ただし、共通コードが原因なら影響する他の単位も再検証します。
+
 ## 無限ループと二重着手を防ぐ
 
 「失敗したら着手待ちに戻す」だけでは、同じエラーを繰り返す可能性があります。そこで、**再試行の予算**を設定します。
@@ -97,6 +99,14 @@ GitLabの[Webhook](https://docs.gitlab.com/user/project/integrations/webhooks/)�
 
 再開時には、回答の反映先、再試行回数、実行権を確認します。人間の判断とAIへの指示を混同しないことが重要です。
 
+## 失敗を次回の制約へ戻す
+
+同じ種類の差し戻しが繰り返される場合、再試行回数を増やすだけでは根本原因が残ります。
+
+例えば「共有APIの引数形式を誤解した」ことが確定したら、**受入条件・テスト・共通Skillのどこを修正するか**を検討します。変更には人間のレビューと版管理を挟み、確認できた教訓だけを次のタスクへ反映します。
+
+Googleの[SREポストモーテム](https://sre.google/sre-book/postmortem-culture/)も、障害の原因を記録するだけでなく、再発防止策を実施することを重視しています。ここでの「次回への反映」はその考え方をAI開発に応用する**設計案**であり、AIが自動的に正しいルールを学習する機能ではありません。
+
 ## まとめ
 
 Issueを正本にする目的は、単にタスクを一覧表示することではありません。
@@ -111,6 +121,7 @@ Issueを正本にする目的は、単にタスクを一覧表示することで
 
 ## 参考資料
 
+- [Google SRE — Postmortem Culture: Learning from Failure](https://sre.google/sre-book/postmortem-culture/)
 - [GitLab Docs — Issues](https://docs.gitlab.com/user/project/issues/)
 - [GitLab Docs — Labels / Scoped Labels](https://docs.gitlab.com/user/project/labels/)
 - [GitLab Docs — Issue boards](https://docs.gitlab.com/user/project/issue_board/)

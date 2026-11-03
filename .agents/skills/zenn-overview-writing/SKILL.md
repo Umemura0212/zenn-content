@@ -1,16 +1,20 @@
 ---
 name: zenn-overview-writing
-description: Write short, accessible Zenn articles focused on the big picture.
+description: Zenn技術記事の読みやすさと読者価値を最終レビューする補助Skill
 ---
 
-# Zenn overview writing
+# 簡潔さと読者価値の最終チェック
 
-- Open with verified primary sources from credible technology organizations, then state what is distinctive and worth learning.
-- Explain the big picture and the design rationale, not exhaustive implementation.
-- Use short sentences and avoid repetition.
-- Keep the article self-contained and readable in about five minutes, with one concrete example and key tradeoffs.
-- Include one simple example or diagram when helpful.
-- Limit key points to three or four, but keep enough depth to justify the design.
-- Link only verified primary sources. Do not cite inaccessible videos.
-- Do not disclose confidential information.
-- Keep `published: false`; do not merge or publish without explicit approval.
+正本は `.agents/skills/zenn-technical-article/SKILL.md`。本Skillは、執筆後のチェックにだけ使う。
+
+- 導入の3段落だけで「課題」「答え」「読む価値」がわかるか。
+- すべての見出しは内容を予告する具体的な言葉か。
+- 図、表、例は1つ以上の疑問を解消しているか。装飾なら削る。
+- 抽象的な説明の後に、判断に使える条件や失敗例があるか。
+- 短くするために根拠・限界・重要な前提を捨てていないか。
+- 同じ結論を何度も繰り返していないか。
+- 未確認の資料を根拠にしていないか。公式の仕様と独自案を混同していないか。
+- 最後の段落で、読者に残す判断基準を簡潔に回収しているか。
+
+文章は5分程度を目安とするが、文字数の厳守より正確さと納得感を優先する。
+`published: false` を維持し、承認なく公開しない。

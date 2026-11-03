@@ -93,6 +93,8 @@ AIの実装が複数同時に走る場合、同じIssueを二重に処理しな�
 
 配布用CLIを用意すれば、特定のAI製品に依存しない共通ルールと、製品ごとの設定を分けられます。
 
+OpenAIの[Harness engineering](https://openai.com/index/harness-engineering/)では、長大な `AGENTS.md` に全規則を詰める方式を避け、**短い入口からリポジトリ内の設計資料へ辿れる構成**を採用しています。また、守るべき構造は文章による指示だけでなく、リンターや構造テストで検査しています。これは同チームの実践例であり、すべてのプロジェクトで唯一の正解という意味ではありません。
+
 ただし、**Skillsに書いた指示だけではルールを強制できません**。テスト、権限、承認などの重要な制約はCIやアクセス制御で担保します。IssueやMRの文章もAIへの無条件の命令とは扱わず、権限変更などは別の承認経路で判断します。
 
 ## まとめ
@@ -109,6 +111,7 @@ AIの実装が複数同時に走る場合、同じIssueを二重に処理しな�
 
 ## 参考資料
 
+- [OpenAI — Harness engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents)
 - [GitLab Docs — Merge request pipelines](https://docs.gitlab.com/ci/pipelines/merge_request_pipelines/)
 - [GitLab Docs — Merge request approval rules](https://docs.gitlab.com/user/project/merge_requests/approvals/rules/)

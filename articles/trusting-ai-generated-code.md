@@ -40,6 +40,8 @@ flowchart TD
 
 同じ仕様の誤解を共有した検査を何個増やしても、その誤解は見つかりません。**検査の数だけでなく、期待値をどこから得るか**が重要です。
 
+Anthropicの[Agent評価ガイド](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)は、実行中の発言やツール操作の記録（Transcript）と、環境に残った実際の結果（Outcome）を区別しています。例えば「修正完了」と報告した事実と、対象のテストが成功し必要な変更が反映された事実は別です。
+
 ## テストが通っても間違う例
 
 例えば「商品価格から10%割引し、最後に送料500円を加える」という仕様を考えます。
@@ -97,3 +99,4 @@ AIによる実装を運用に組み込むには、コードレビューだけで
 - [Google Testing Blog — Just Say No to More End-to-End Tests](https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html)
 - [NIST — Secure Software Development Framework（SP 800-218）](https://csrc.nist.gov/pubs/sp/800/218/final)
 - [Google — What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html)
+- [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)

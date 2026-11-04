@@ -1,0 +1,33 @@
+name: Validate Zenn drafts
+on:
+  pull_request:
+    paths:
+      - 'articles/**'
+      - '.github/workflows/validate-drafts.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Ensure all article drafts are unpublished
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          files = list(pathlib.Path('articles').glob('*.md'))
+          if not files:
+              sys.exit('No article markdown files')
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              match = re.match(r'\A---\n(.*?)\n---\n', text, re.S)
+              if not match:
+                  sys.exit(f'{path}: invalid frontmatter')
+              meta = match.group(1)
+              if not re.search(r'^published:\s*false\s*$', meta, re.M):
+                  sys.exit(f'{path}: published must be false')
+              for key in ('title', 'emoji', 'type', 'topics'):
+                  if not re.search(rf'^{key}:\s*\S+', meta, re.M):
+                      sys.exit(f'{path}: missing {key}')
+          print(f'Validated {len(files)} unpublished article(s)')
+          PY

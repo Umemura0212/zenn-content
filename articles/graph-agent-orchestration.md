@@ -76,6 +76,8 @@ Anthropicは[Building effective agents](https://www.anthropic.com/research/build
 
 LangGraph自体もループや条件分岐を表現できます。「外側」と「内側」は機能上の役割分担であり、必ずしも別プロセスや別フレームワークを意味しません。
 
+**実践との区別**：この文章はLangGraphを使う構成案です。別のローカル開発基盤では、GitLabの状態ラベルと通常のPythonプログラムで外側のGraph制御を実装し、内側の実装・レビューだけAIに任せています。つまり、**Graphという設計概念はLangGraphの採用を意味しません**。ここで紹介したLangGraph版を実運用で検証したと主張するものでもありません。
+
 ## まとめ
 
 外側のLangGraphで**工程と制約**を管理し、内側のAgent Loopで**手段の探索と実行**を行う。
